@@ -28,7 +28,9 @@ body {
 .C-I {
     flex: 1;
     padding: 30px;
-    background-color: #111;
+    background:
+        radial-gradient(circle at top left, rgba(0, 102, 255, 0.24), transparent 42%),
+        linear-gradient(180deg, #111 0%, #171717 100%);
     display: grid;
     gap: 14px;
 }
@@ -38,10 +40,61 @@ body {
     line-height: 1.5;
 }
 
+.intro-contacto {
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 34ch;
+    margin-bottom: 8px;
+}
+
+.lista-contacto {
+    display: grid;
+    gap: 14px;
+}
+
+.item-contacto {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(6px);
+}
+
+.item-contacto strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.98rem;
+    color: #ffffff;
+}
+
+.item-contacto p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.icono-contacto {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.95), rgba(68, 198, 255, 0.65));
+    box-shadow: 0 10px 22px rgba(0, 102, 255, 0.24);
+    color: #fff;
+    font-size: 1.1rem;
+}
+
 .C-F {
     flex: 1;
     padding: 30px;
     background-color: #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .encabezado-formulario {
@@ -76,6 +129,21 @@ body {
 .boton-secundario:hover {
     background: rgba(255, 255, 255, 0.16);
     border-color: rgba(255, 255, 255, 0.35);
+}
+
+.boton-eliminar {
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 120, 120, 0.45);
+    border-radius: 10px;
+    background: rgba(220, 82, 82, 0.14);
+    color: #ffd8d8;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.boton-eliminar:hover {
+    background: rgba(220, 82, 82, 0.25);
+    border-color: rgba(255, 160, 160, 0.6);
 }
 
 .C-F form {
@@ -343,6 +411,10 @@ body {
     line-height: 1.5;
 }
 
+.tarjeta-registro .boton-eliminar {
+    margin-top: 8px;
+}
+
 @media (max-width: 768px) {
     body {
         align-items: flex-start;
@@ -365,6 +437,10 @@ body {
     .C-I,
     .C-F {
         padding: 24px 20px;
+    }
+
+    .C-F {
+        justify-content: flex-start;
     }
 
     .C-I h2,
@@ -398,6 +474,17 @@ body {
         font-size: 0.95rem;
     }
 
+    .item-contacto {
+        grid-template-columns: 44px 1fr;
+        padding: 14px;
+    }
+
+    .icono-contacto {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+
     .input-container input,
     .input-container textarea,
     .C-F form button {
@@ -406,7 +493,8 @@ body {
 
     .C-F form button,
     .link-registros,
-    .boton-secundario {
+    .boton-secundario,
+    .boton-eliminar {
         width: 100%;
     }
 
