@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, getDoc, getFirestore, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, deleteDoc, doc, getDoc, getFirestore, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 
 const firebasePendiente = document.getElementById("firebase-pendiente");
@@ -14,8 +14,10 @@ const tablaBody = document.getElementById("tabla-registros-body");
 const tablaWrapper = document.getElementById("tabla-wrapper");
 const tarjetas = document.getElementById("tarjetas-registros");
 const sinRegistros = document.getElementById("sin-registros");
+const estadoRegistros = document.getElementById("estado-registros");
 
 let unsubscribe = null;
+let db = null;
 
 function setLoginState(mensaje, tipo) {
     estadoLogin.hidden = false;
@@ -27,6 +29,18 @@ function clearLoginState() {
     estadoLogin.hidden = true;
     estadoLogin.textContent = "";
     delete estadoLogin.dataset.tipo;
+}
+
+function setRecordsState(message, type) {
+    estadoRegistros.hidden = false;
+    estadoRegistros.textContent = message;
+    estadoRegistros.dataset.tipo = type;
+}
+
+function clearRecordsState() {
+    estadoRegistros.hidden = true;
+    estadoRegistros.textContent = "";
+    delete estadoRegistros.dataset.tipo;
 }
 
 function escapeHtml(value) {
@@ -76,6 +90,11 @@ function createRow(record) {
             <td>${record.hizoPeticion ? "Si" : "No"}</td>
             <td>${escapeHtml(record.peticion)}</td>
             <td>${formatCreatedAt(record.creadoEn)}</td>
+            <td>
+                <button type="button" class="boton-eliminar" data-id="${escapeHtml(record.id)}">
+                    Eliminar
+                </button>
+            </td>
         </tr>
     `;
 }
@@ -89,6 +108,9 @@ function createCard(record) {
             <p><strong>Hizo peticion:</strong> ${record.hizoPeticion ? "Si" : "No"}</p>
             <p><strong>Detalle:</strong> ${escapeHtml(record.peticion)}</p>
             <p><strong>Registrado:</strong> ${formatCreatedAt(record.creadoEn)}</p>
+            <button type="button" class="boton-eliminar" data-id="${escapeHtml(record.id)}">
+                Eliminar
+            </button>
         </article>
     `;
 }
@@ -120,7 +142,7 @@ if (!isFirebaseConfigured()) {
 } else {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
     ingresarGoogle.addEventListener("click", async () => {
@@ -143,6 +165,42 @@ if (!isFirebaseConfigured()) {
         setMode("login");
     });
 
+    async function deleteRecord(recordId, button) {
+        const confirmed = window.confirm("Seguro que deseas eliminar este registro?");
+
+        if (!confirmed) {
+            return;
+        }
+
+        button.disabled = true;
+        setRecordsState("Eliminando registro...", "info");
+
+        try {
+            await deleteDoc(doc(db, "solicitudes", recordId));
+            setRecordsState("Registro eliminado correctamente.", "success");
+        } catch (error) {
+            const detail = error?.code ? ` (${error.code})` : "";
+            setRecordsState(`No fue posible eliminar el registro${detail}.`, "error");
+            button.disabled = false;
+        }
+    }
+
+    document.addEventListener("click", (event) => {
+        const button = event.target.closest(".boton-eliminar");
+
+        if (!button) {
+            return;
+        }
+
+        const recordId = button.dataset.id;
+
+        if (!recordId) {
+            return;
+        }
+
+        deleteRecord(recordId, button);
+    });
+
     onAuthStateChanged(auth, (user) => {
         if (unsubscribe) {
             unsubscribe();
@@ -151,6 +209,7 @@ if (!isFirebaseConfigured()) {
 
         if (!user) {
             clearLoginState();
+            clearRecordsState();
             setMode("login");
             return;
         }
@@ -167,6 +226,7 @@ if (!isFirebaseConfigured()) {
                 }
 
                 setMode("content");
+                clearRecordsState();
                 const q = query(collection(db, "solicitudes"), orderBy("creadoEn", "desc"));
                 unsubscribe = onSnapshot(q, (snapshot) => {
                     const records = snapshot.docs.map((recordDoc) => ({
