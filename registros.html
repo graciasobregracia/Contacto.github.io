@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros del formulario</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="pagina-registros">
+    <main class="contenedor-registros">
+        <div class="cabecera-registros">
+            <div>
+                <p class="eyebrow">Panel privado</p>
+                <h1>Registros del formulario</h1>
+                <p class="descripcion-registros">
+                    Esta vista usa Google Login y solo muestra los datos a los correos autorizados.
+                </p>
+            </div>
+            <div class="acciones-registros">
+                <a class="link-registros" href="index.html">Volver al formulario</a>
+                <button type="button" class="boton-secundario" id="cerrar-sesion" hidden>Cerrar sesi&oacute;n</button>
+            </div>
+        </div>
+
+        <section class="panel-registros">
+            <div id="firebase-pendiente" class="estado-vacio" hidden>
+                Falta configurar Firebase en <strong>firebase-config.js</strong> antes de usar el login y los registros.
+            </div>
+
+            <div id="login-panel" class="login-panel" hidden>
+                <h2>Acceso con Google</h2>
+                <p>Solo los correos autorizados por ustedes podr&aacute;n ver los registros.</p>
+                <button type="button" class="boton-google" id="ingresar-google">Ingresar con Google</button>
+                <p id="estado-login" class="mensaje-estado" hidden></p>
+            </div>
+
+            <div id="sin-acceso" class="estado-vacio" hidden>
+                Tu cuenta no est&aacute; autorizada para ver estos registros.
+            </div>
+
+            <div id="contenido-registros" hidden>
+                <div id="sin-registros" class="estado-vacio" hidden>
+                    A&uacute;n no hay registros guardados.
+                </div>
+
+                <div class="tabla-wrapper" id="tabla-wrapper" hidden>
+                    <table class="tabla-registros">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Fecha</th>
+                                <th>Tel&eacute;fono</th>
+                                <th>Petici&oacute;n</th>
+                                <th>Detalle</th>
+                                <th>Registrado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-registros-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="tarjetas-registros" id="tarjetas-registros"></div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="registros.js"></script>
+</body>
+
+</html>

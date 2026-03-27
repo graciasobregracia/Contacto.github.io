@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/bd67712f8a.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="C-Cformulario-de-contacto">
+        <div class="C-I">
+            <h2>Cont&aacute;ctanos</h2>
+            <p>
+                <i class="fa-solid fa-location-dot"></i>
+                <strong>Direcci&oacute;n:</strong>
+                Calle 28 AA # 31 - 13 | B. San Miguel | Santa Rosa de Osos
+            </p>
+            <p>
+                <i class="fa-solid fa-phone"></i>
+                <strong>Tel&eacute;fono:</strong>
+                +57 3018664201
+            </p>
+            <p>
+                <i class="fa-solid fa-envelope"></i>
+                <strong>Correo electr&oacute;nico:</strong>
+                correo@ejemplo.com
+            </p>
+        </div>
+
+        <div class="C-F">
+            <div class="encabezado-formulario">
+                <h2>Env&iacute;anos un mensaje</h2>
+                <a class="link-registros" href="registros.html">Acceso registros</a>
+            </div>
+
+            <form id="contacto-formulario">
+                <div class="input-container">
+                    <input type="text" id="nombre" required>
+                    <label for="nombre">Nombre</label>
+                </div>
+
+                <div class="input-container active">
+                    <input type="date" id="fecha" required>
+                    <label for="fecha">Fecha</label>
+                </div>
+
+                <div class="input-container">
+                    <input type="tel" id="telefono" inputmode="numeric" pattern="[0-9 +()-]{7,20}" required>
+                    <label for="telefono">N&uacute;mero de tel&eacute;fono</label>
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" id="hacerPeticion"> Deseo hacer una petici&oacute;n
+                </label>
+
+                <div class="input-container" id="peticion-container" hidden>
+                    <textarea id="peticion"></textarea>
+                    <label for="peticion">Petici&oacute;n</label>
+                    <small id="peticion-error" class="mensaje-error"></small>
+                </div>
+
+                <button type="submit" id="boton-enviar">Enviar</button>
+                <p id="estado-envio" class="mensaje-estado" hidden></p>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="formulario.js"></script>
+</body>
+
+</html>

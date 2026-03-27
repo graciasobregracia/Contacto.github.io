@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthorizedViewer() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/authorized_viewers/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/authorized_viewers/$(request.auth.token.email)).data.active == true;
+    }
+
+    match /solicitudes/{document} {
+      allow create: if true;
+      allow read: if isAuthorizedViewer();
+      allow update, delete: if false;
+    }
+
+    match /authorized_viewers/{email} {
+      allow read: if request.auth != null && request.auth.token.email == email;
+      allow write: if false;
+    }
+  }
+}
