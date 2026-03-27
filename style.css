@@ -146,6 +146,21 @@ body {
     border-color: rgba(255, 160, 160, 0.6);
 }
 
+.boton-restaurar {
+    padding: 9px 12px;
+    border: 1px solid rgba(79, 186, 122, 0.45);
+    border-radius: 10px;
+    background: rgba(51, 176, 112, 0.14);
+    color: #d6ffe9;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.boton-restaurar:hover {
+    background: rgba(51, 176, 112, 0.24);
+    border-color: rgba(121, 227, 162, 0.55);
+}
+
 .C-F form {
     display: flex;
     flex-direction: column;
@@ -415,6 +430,10 @@ body {
     margin-top: 8px;
 }
 
+.tarjeta-registro .boton-restaurar {
+    margin-top: 8px;
+}
+
 @media (max-width: 768px) {
     body {
         align-items: flex-start;
@@ -494,7 +513,8 @@ body {
     .C-F form button,
     .link-registros,
     .boton-secundario,
-    .boton-eliminar {
+    .boton-eliminar,
+    .boton-restaurar {
         width: 100%;
     }
 
