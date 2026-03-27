@@ -1,10 +1,10 @@
 export const firebaseConfig = {
-    apiKey: "REEMPLAZAR_API_KEY",
-    authDomain: "REEMPLAZAR_AUTH_DOMAIN",
-    projectId: "REEMPLAZAR_PROJECT_ID",
-    storageBucket: "REEMPLAZAR_STORAGE_BUCKET",
-    messagingSenderId: "REEMPLAZAR_MESSAGING_SENDER_ID",
-    appId: "REEMPLAZAR_APP_ID"
+    apiKey: "AIzaSyDvVY14MgNfIs0yGt8txALnmSpXfp-lPOg",
+    authDomain: "contacto-form-f59b0.firebaseapp.com",
+    projectId: "contacto-form-f59b0",
+    storageBucket: "contacto-form-f59b0.firebasestorage.app",
+    messagingSenderId: "243724191813",
+    appId: "1:243724191813:web:6f9f48815b5532905d3b2c"
 };
 
 export const allowedViewerEmails = [
