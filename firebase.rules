@@ -14,10 +14,15 @@ service cloud.firestore {
       allow delete: if isAuthorizedViewer();
     }
 
+    match /solicitudes_eliminadas/{document} {
+      allow create: if isAuthorizedViewer();
+      allow update: if false;
+      allow read, delete: if false;
+    }
+
     match /authorized_viewers/{email} {
       allow read: if request.auth != null && request.auth.token.email == email;
       allow write: if false;
     }
   }
 }
-
