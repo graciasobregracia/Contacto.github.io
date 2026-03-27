@@ -10,7 +10,8 @@ service cloud.firestore {
     match /solicitudes/{document} {
       allow create: if true;
       allow read: if isAuthorizedViewer();
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isAuthorizedViewer();
     }
 
     match /authorized_viewers/{email} {
@@ -19,3 +20,4 @@ service cloud.firestore {
     }
   }
 }
+
