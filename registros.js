@@ -1,6 +1,16 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, deleteDoc, doc, getDoc, getFirestore, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+    collection,
+    doc,
+    getDoc,
+    getFirestore,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 
 const firebasePendiente = document.getElementById("firebase-pendiente");
@@ -18,11 +28,12 @@ const estadoRegistros = document.getElementById("estado-registros");
 
 let unsubscribe = null;
 let db = null;
+let currentUser = null;
 
-function setLoginState(mensaje, tipo) {
+function setLoginState(message, type) {
     estadoLogin.hidden = false;
-    estadoLogin.textContent = mensaje;
-    estadoLogin.dataset.tipo = tipo;
+    estadoLogin.textContent = message;
+    estadoLogin.dataset.tipo = type;
 }
 
 function clearLoginState() {
@@ -137,6 +148,51 @@ function setMode(mode) {
     cerrarSesion.hidden = mode === "firebase-pendiente" || mode === "login";
 }
 
+async function moveToTrash(recordId, button) {
+    if (!currentUser?.email) {
+        setRecordsState("No hay una sesion valida para eliminar el registro.", "error");
+        return;
+    }
+
+    const confirmed = window.confirm("Seguro que deseas eliminar este registro? Se guardara un respaldo en Firebase.");
+
+    if (!confirmed) {
+        return;
+    }
+
+    button.disabled = true;
+    setRecordsState("Eliminando registro y guardando respaldo...", "info");
+
+    try {
+        const sourceRef = doc(db, "solicitudes", recordId);
+        const sourceSnap = await getDoc(sourceRef);
+
+        if (!sourceSnap.exists()) {
+            setRecordsState("El registro ya no existe o ya fue eliminado.", "error");
+            button.disabled = false;
+            return;
+        }
+
+        const trashRef = doc(db, "solicitudes_eliminadas", recordId);
+        const batch = writeBatch(db);
+
+        batch.set(trashRef, {
+            ...sourceSnap.data(),
+            originalId: recordId,
+            eliminadoEn: serverTimestamp(),
+            eliminadoPor: currentUser.email
+        });
+        batch.delete(sourceRef);
+
+        await batch.commit();
+        setRecordsState("Registro eliminado correctamente. El respaldo quedo guardado en Firebase.", "success");
+    } catch (error) {
+        const detail = error?.code ? ` (${error.code})` : "";
+        setRecordsState(`No fue posible eliminar el registro${detail}.`, "error");
+        button.disabled = false;
+    }
+}
+
 if (!isFirebaseConfigured()) {
     setMode("firebase-pendiente");
 } else {
@@ -165,30 +221,10 @@ if (!isFirebaseConfigured()) {
         setMode("login");
     });
 
-    async function deleteRecord(recordId, button) {
-        const confirmed = window.confirm("Seguro que deseas eliminar este registro?");
-
-        if (!confirmed) {
-            return;
-        }
-
-        button.disabled = true;
-        setRecordsState("Eliminando registro...", "info");
-
-        try {
-            await deleteDoc(doc(db, "solicitudes", recordId));
-            setRecordsState("Registro eliminado correctamente.", "success");
-        } catch (error) {
-            const detail = error?.code ? ` (${error.code})` : "";
-            setRecordsState(`No fue posible eliminar el registro${detail}.`, "error");
-            button.disabled = false;
-        }
-    }
-
     document.addEventListener("click", (event) => {
         const button = event.target.closest(".boton-eliminar");
 
-        if (!button) {
+        if (!button || contenidoRegistros.hidden) {
             return;
         }
 
@@ -198,7 +234,7 @@ if (!isFirebaseConfigured()) {
             return;
         }
 
-        deleteRecord(recordId, button);
+        moveToTrash(recordId, button);
     });
 
     onAuthStateChanged(auth, (user) => {
@@ -206,6 +242,8 @@ if (!isFirebaseConfigured()) {
             unsubscribe();
             unsubscribe = null;
         }
+
+        currentUser = user;
 
         if (!user) {
             clearLoginState();
@@ -227,8 +265,8 @@ if (!isFirebaseConfigured()) {
 
                 setMode("content");
                 clearRecordsState();
-                const q = query(collection(db, "solicitudes"), orderBy("creadoEn", "desc"));
-                unsubscribe = onSnapshot(q, (snapshot) => {
+                const recordsQuery = query(collection(db, "solicitudes"), orderBy("creadoEn", "desc"));
+                unsubscribe = onSnapshot(recordsQuery, (snapshot) => {
                     const records = snapshot.docs.map((recordDoc) => ({
                         id: recordDoc.id,
                         ...recordDoc.data()
