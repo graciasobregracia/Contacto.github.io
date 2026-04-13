@@ -9,7 +9,10 @@ const peticion = document.getElementById("peticion");
 const peticionError = document.getElementById("peticion-error");
 const nombre = document.getElementById("nombre");
 const fecha = document.getElementById("fecha");
+const telefonoPrefijo = document.getElementById("telefono-prefijo");
+const telefonoNumero = document.getElementById("telefono-numero");
 const telefono = document.getElementById("telefono");
+const telefonoError = document.getElementById("telefono-error");
 const estadoEnvio = document.getElementById("estado-envio");
 const botonEnviar = document.getElementById("boton-enviar");
 
@@ -46,6 +49,29 @@ function mostrarErrorPeticion(mensaje) {
 function limpiarErrorPeticion() {
     peticion.setCustomValidity("");
     peticionError.textContent = "";
+}
+
+function actualizarTelefono() {
+    const soloNumeros = telefonoNumero.value.replace(/\D/g, "");
+    telefonoNumero.value = soloNumeros;
+
+    if (!soloNumeros) {
+        telefono.value = "";
+        telefonoNumero.setCustomValidity("Ingresa un numero de telefono.");
+        telefonoError.textContent = "Ingresa un numero de telefono.";
+        return;
+    }
+
+    if (soloNumeros.length < 7) {
+        telefono.value = "";
+        telefonoNumero.setCustomValidity("Ingresa un numero valido.");
+        telefonoError.textContent = "Ingresa un numero valido.";
+        return;
+    }
+
+    telefono.value = `${telefonoPrefijo.value} ${soloNumeros}`;
+    telefonoNumero.setCustomValidity("");
+    telefonoError.textContent = "";
 }
 
 function esPeticionCoherente(texto) {
@@ -96,6 +122,9 @@ checkbox.addEventListener("change", () => {
     limpiarErrorPeticion();
 });
 
+telefonoPrefijo.addEventListener("change", actualizarTelefono);
+telefonoNumero.addEventListener("input", actualizarTelefono);
+
 peticion.addEventListener("input", () => {
     if (!checkbox.checked) {
         limpiarErrorPeticion();
@@ -137,6 +166,13 @@ formulario.addEventListener("submit", async (event) => {
         return;
     }
 
+    actualizarTelefono();
+
+    if (!telefono.value) {
+        telefonoNumero.reportValidity();
+        return;
+    }
+
     botonEnviar.disabled = true;
     setEstado("Enviando datos...", "info");
 
@@ -154,6 +190,10 @@ formulario.addEventListener("submit", async (event) => {
         peticionContainer.hidden = true;
         peticion.required = false;
         limpiarErrorPeticion();
+        telefono.value = "";
+        telefonoNumero.setCustomValidity("");
+        telefonoError.textContent = "";
+        telefonoPrefijo.value = "+57";
         setEstado("Tu formulario fue enviado correctamente.", "success");
     } catch (error) {
         const detalle = error?.code ? ` (${error.code})` : "";
@@ -163,3 +203,4 @@ formulario.addEventListener("submit", async (event) => {
         botonEnviar.disabled = false;
     }
 });
+
