@@ -67,9 +67,20 @@
                     <label for="fecha">Fecha</label>
                 </div>
 
-                <div class="input-container">
-                    <input type="tel" id="telefono" inputmode="numeric" pattern="[0-9 +()-]{7,20}" required>
-                    <label for="telefono">N&uacute;mero de tel&eacute;fono</label>
+                <div class="input-container telefono-container">
+                    <label class="telefono-label" for="telefono-numero">N&uacute;mero de tel&eacute;fono</label>
+                    <div class="telefono-input-group">
+                        <select id="telefono-prefijo" aria-label="Prefijo de pa&iacute;s">
+                            <option value="+57" selected>+57 CO</option>
+                            <option value="+1">+1 US</option>
+                            <option value="+34">+34 ES</option>
+                            <option value="+52">+52 MX</option>
+                            <option value="+54">+54 AR</option>
+                        </select>
+                        <input type="tel" id="telefono-numero" inputmode="numeric" maxlength="15" placeholder="3018664201" required>
+                    </div>
+                    <input type="hidden" id="telefono" required>
+                    <small id="telefono-error" class="mensaje-error"></small>
                 </div>
 
                 <label class="check">
