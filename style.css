@@ -221,6 +221,41 @@ body {
     border: 1px solid #ff7b7b;
 }
 
+.telefono-container {
+    margin-bottom: 25px;
+}
+
+.telefono-container .telefono-label {
+    position: static;
+    display: block;
+    margin-bottom: 10px;
+    color: #ddd;
+    font-size: 0.95rem;
+}
+
+.telefono-input-group {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 10px;
+}
+
+.telefono-input-group select,
+.telefono-input-group input {
+    width: 100%;
+    padding: 14px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+}
+
+.telefono-input-group select {
+    cursor: pointer;
+    appearance: none;
+}
+
 .mensaje-error {
     display: block;
     margin-top: 8px;
@@ -508,6 +543,10 @@ body {
     .input-container textarea,
     .C-F form button {
         font-size: 16px;
+    }
+
+    .telefono-input-group {
+        grid-template-columns: 1fr;
     }
 
     .C-F form button,
